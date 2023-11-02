@@ -1,0 +1,147 @@
+[gd_scene load_steps=3 format=3 uid="uid://3pvkkf5supie"]
+
+[sub_resource type="GDScript" id="GDScript_ywga7"]
+script/source = "extends actor
+
+class_name player
+#Input Handler and imported nodes
+var inputHandle = inputHandler.new()
+@onready var camera_3d = $Head/Camera3D
+@onready var head = $Head
+@onready var sprint_bar = $Head/Camera3D/sprintBar
+
+
+
+#speeds for different speed states
+var walkingSpeed : float = 5.0
+var sprintSpeed : float = 8.0
+
+#speed state
+var sprinting : bool = false
+var sprintActive : bool = true
+
+#Stamina
+var currentStamina : float = 0.0
+@export var maxStamina : float = 100.0
+
+#UI for sprining
+var SprintUI : UI_Sprint_element = UI_Sprint_element.new()
+
+#Input handling work
+var mouseSens : float = .5
+var direction = Vector3.ZERO
+
+var lerpValue : float = 10.0
+
+func _ready():
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	currentStamina = maxStamina
+
+func _input(event):
+	
+	if event is InputEventMouseMotion:
+		
+		rotate_y(deg_to_rad(-event.relative.x * mouseSens))
+		head.rotate_x(deg_to_rad(-event.relative.y * mouseSens))
+		head.rotation.x = clamp(head.rotation.x, deg_to_rad(-98), deg_to_rad(98))
+		
+
+func _physics_process(delta):
+	
+	inputHandle.inputHandle(self)
+	
+	
+	#SPRINT HANDLING
+	
+	#Handling stamina and sprint logic
+	#getting time left on sprint & sprint delay
+	if Input.is_action_pressed(\"Sprint\"):
+		sprinting = true
+		
+	else:
+		
+		sprinting = false
+	
+	if sprintActive:
+		
+		if sprinting:
+			reduceStamina(1.0)
+			currntSpeed = sprintSpeed
+		else:
+			refillStamina(0.5)
+			currntSpeed = walkingSpeed
+	else:
+		if currentStamina < maxStamina:
+			refillStamina(.3)
+		currntSpeed = walkingSpeed
+	
+	#updating sprint UI
+	SprintUI.update_elemeent(sprint_bar, currentStamina)
+	
+	#END OF SPRINT HANDLING
+	
+	# Get the input direction and handle the movement/deceleration.
+	# As good practice, you should replace UI actions with custom gameplay actions.
+	var input_dir = Input.get_vector(\"Left\", \"Right\", \"Forward\", \"Backward\")
+	direction = lerp(direction, transform.basis * Vector3(input_dir.x, 0, input_dir.y).normalized(), lerpValue * delta)
+	
+	if direction:
+		
+		velocity.x = direction.x * currntSpeed
+		velocity.z = direction.z * currntSpeed
+		
+	else:
+		
+		velocity.x = move_toward(velocity.x, 0, currntSpeed)
+		velocity.z = move_toward(velocity.z, 0, currntSpeed)
+	
+	move_and_slide()
+
+func refillStamina(regen : float) -> void:
+	
+	currentStamina += regen
+	
+	if currentStamina >= maxStamina:
+		currentStamina = 100
+	
+	if currentStamina >= maxStamina/4:
+		sprintActive = true
+
+func reduceStamina(degen : float) -> void:
+	
+	currentStamina -= degen
+	
+	if currentStamina <= 0:
+		currentStamina = 0
+		sprintActive = false
+
+
+"
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ssutq"]
+
+[node name="Player" type="CharacterBody3D"]
+script = SubResource("GDScript_ywga7")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_ssutq")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+fov = 90.0
+
+[node name="sprintBar" type="ProgressBar" parent="Head/Camera3D"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -235.0
+offset_top = -95.0
+offset_right = 235.0
+offset_bottom = -48.0
+grow_horizontal = 2
+grow_vertical = 0

@@ -1,0 +1,76 @@
+[gd_scene load_steps=13 format=3 uid="uid://c4465orxi3go3"]
+
+[ext_resource type="Script" path="res://Scripts/GameManager.gd" id="1_cmnxo"]
+[ext_resource type="Texture2D" uid="uid://bwdqq776cj4ur" path="res://Textures/prototypeTextures.png" id="1_tkqwe"]
+[ext_resource type="PackedScene" uid="uid://3pvkkf5supie" path="res://Scenes/player.tscn" id="2_f4sxk"]
+[ext_resource type="Script" path="res://Scripts/SimpleChase.gd" id="3_js27y"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7utmt"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_jer45"]
+sky_material = SubResource("ProceduralSkyMaterial_7utmt")
+
+[sub_resource type="Environment" id="Environment_qtsnu"]
+background_mode = 2
+sky = SubResource("Sky_jer45")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_5aarf"]
+vertices = PackedVector3Array(-18.5, 0.5, -24.5, -24.5, 0.5, -24.5, -24.5, 0.5, -18.5, -24.5, 0.5, 18.25, -24.5, 0.5, 24.5, -18.5, 0.5, 24.5, 24.5, 0.5, -18.5, 24.5, 0.5, -24.5, 18.25, 0.5, -24.5, 18.25, 0.5, 24.5, 24.5, 0.5, 24.5, 24.5, 0.5, 18.25, -24.5, 0.5, 12.25, -24.5, 0.5, 18.25, -18.5, 0.5, 24.5, -12.25, 0.5, 24.5, 24.5, 0.5, -18.5, 18.25, 0.5, -24.5, 12.25, 0.5, -24.5, 24.5, 0.5, -12.25, -12.25, 0.5, -24.5, -18.5, 0.5, -24.5, -24.5, 0.5, -18.5, -24.5, 0.5, -12.25, 12.25, 0.5, 24.5, 18.25, 0.5, 24.5, 24.5, 0.5, 18.25, 6, 0.5, 24.5, 24.5, 0.5, 12.25, 24.5, 0.5, 6, 0, 0.5, 24.5, 12.25, 0.5, 24.5, 24.5, 0.5, 18.25, 24.5, 0.5, 12.25, 6, 0.5, 24.5, 0, 0.5, -24.5, -6.25, 0.5, -24.5, -24.5, 0.5, -6.25, -24.5, 0.5, 0, 24.5, 0.5, 0, 0, 0.5, -24.5, -24.5, 0.5, 0, -6.25, 0.5, 24.5, 0, 0.5, 24.5, 24.5, 0.5, 6, -24.5, 0.5, 12.25, -12.25, 0.5, 24.5, -6.25, 0.5, 24.5, -24.5, 0.5, 6, 24.5, 0.5, -6.25, 24.5, 0.5, -12.25, 12.25, 0.5, -24.5, 6, 0.5, -24.5, -6.25, 0.5, -24.5, -12.25, 0.5, -24.5, -24.5, 0.5, -12.25, -24.5, 0.5, -6.25, -24.5, 0.5, 0, -24.5, 0.5, 6, -6.25, 0.5, 24.5, 24.5, 0.5, -6.25, 6, 0.5, -24.5, 0, 0.5, -24.5, 24.5, 0.5, 0)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(5, 4, 3), PackedInt32Array(8, 7, 6), PackedInt32Array(11, 10, 9), PackedInt32Array(13, 12, 14), PackedInt32Array(14, 12, 15), PackedInt32Array(17, 16, 18), PackedInt32Array(18, 16, 19), PackedInt32Array(21, 20, 22), PackedInt32Array(22, 20, 23), PackedInt32Array(26, 25, 24), PackedInt32Array(28, 27, 29), PackedInt32Array(29, 27, 30), PackedInt32Array(32, 31, 33), PackedInt32Array(33, 31, 34), PackedInt32Array(36, 35, 37), PackedInt32Array(37, 35, 38), PackedInt32Array(44, 43, 39), PackedInt32Array(39, 43, 42), PackedInt32Array(39, 42, 41), PackedInt32Array(39, 41, 40), PackedInt32Array(46, 45, 47), PackedInt32Array(47, 45, 48), PackedInt32Array(50, 49, 51), PackedInt32Array(51, 49, 52), PackedInt32Array(54, 53, 55), PackedInt32Array(55, 53, 56), PackedInt32Array(59, 58, 57), PackedInt32Array(61, 60, 62), PackedInt32Array(62, 60, 63)]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wc7lu"]
+albedo_texture = ExtResource("1_tkqwe")
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4hkbw"]
+albedo_color = Color(1, 0.427451, 0.427451, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_mk7hp"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_h2jve"]
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_cmnxo")
+
+[node name="ENV" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="ENV"]
+environment = SubResource("Environment_qtsnu")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="ENV"]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Floor" type="Node3D" parent="."]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Floor"]
+navigation_mesh = SubResource("NavigationMesh_5aarf")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Floor/NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+material_override = SubResource("StandardMaterial3D_wc7lu")
+use_collision = true
+size = Vector3(50, 0.5, 50)
+
+[node name="AI" type="CharacterBody3D" parent="." groups=["Enemy"]]
+script = ExtResource("3_js27y")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="AI"]
+target_desired_distance = 3.0
+agent_height_offset = 0.5
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="AI"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+material_overlay = SubResource("StandardMaterial3D_4hkbw")
+mesh = SubResource("CapsuleMesh_mk7hp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AI"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_h2jve")
+
+[node name="Player" parent="." instance=ExtResource("2_f4sxk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 13)
